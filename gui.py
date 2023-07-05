@@ -32,13 +32,13 @@ class GameNightGui:
         self.root.geometry("500x500")
         self.label = tk.Label(self.root, text="Game Night Drinks", font=('Arial', 18))
         self.label.grid(row=0, padx=10, pady=10)
+        self.current_row_iter = 0
 
         self.button_frame = tk.Frame(self.root)
         self.current_drinks = list()
-
+        self.current_labels = list()
 
         self.gen_buttons(10)
-        self.gen_label(10)
 
 
         self.enter_drink = tk.Label(self.button_frame, text="Enter New Drink:")
@@ -55,24 +55,26 @@ class GameNightGui:
         self.root.mainloop()
 
     def add_drink(self):
-        self.current_drinks.append(self.Drink(self.new_drink_field.get(), 0, self.add_price_field.get(), self.button_frame))
+        self.current_drinks.append(self.Drink(self.new_drink_field.get(), 0, float(self.add_price_field.get()), self.button_frame))
 
+        self.current_labels.append(tk.Label(self.button_frame, text=self.current_drinks[-1].drink_name))
+        self.current_labels[len(self.current_labels)-1].grid(row=len(self.current_labels) - 1, column=0)
+        self.current_drinks[len(self.current_drinks) - 1].increase_button.grid(row=len(self.current_drinks) - 1, column=1)
+        self.current_drinks[len(self.current_drinks) - 1].decrease_button.grid(row=len(self.current_drinks) - 1, column=2)
+        self.current_drinks[len(self.current_drinks) - 1].display_drink.grid(row=len(self.current_drinks) - 1, column=3)
         print(self.new_drink_field.get())
 
     def gen_buttons(self, number_of_buttons:int):
         for i in range(number_of_buttons):
+            self.current_labels.append(tk.Label(self.button_frame, text=f"Drink {i}:"))
+            self.current_labels[len(self.current_labels) - 1].grid(row=len(self.current_labels) - 1, column=0)
             self.current_drinks.append(self.Drink(f"Drink {i}", 0, 0, self.button_frame))
-            self.current_drinks[i].increase_button.grid(row=i, column=1)
-            self.current_drinks[i].decrease_button.grid(row=i, column=2)
-            self.current_drinks[i].display_drink.grid(row=i, column=3)
+            self.current_drinks[len(self.current_drinks) - 1].increase_button.grid(row=len(self.current_drinks) - 1, column=1)
+            self.current_drinks[len(self.current_drinks) - 1].decrease_button.grid(row=len(self.current_drinks) - 1, column=2)
+            self.current_drinks[len(self.current_drinks) - 1].display_drink.grid(row=len(self.current_drinks) - 1, column=3)
         self.button_frame.grid(sticky='W')
 
-    def gen_label(self, number_of_buttons:int):
-        self.current_labels = list()
-        for i in range(number_of_buttons):
-            self.current_labels.append(tk.Label(self.button_frame, text=f"Drink {i}:"))
-            self.current_labels[i].grid(row=i, column=0)
-        self.button_frame.grid(sticky='W')
+
 
 def hello_world():
     print("Hello World!")
