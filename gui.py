@@ -1,9 +1,8 @@
-import tkinter
 import tkinter as tk
+import gui as gui
 
 
 class GameNightGui:
-
 
     class Drink:
 
@@ -42,7 +41,7 @@ class GameNightGui:
 
 
         self.enter_drink = tk.Label(self.button_frame, text="Enter New Drink:")
-        self.enter_drink.grid(sticky='SW',column=0, row=100)
+        self.enter_drink.grid(sticky='SW', column=0, row=100)
         self.new_drink_field = tk.Entry(self.button_frame, width=10)
         self.new_drink_field.insert(0, "Drink Name")
         self.new_drink_field.grid(sticky="SW", column=1, row=100)
@@ -55,7 +54,7 @@ class GameNightGui:
         self.root.mainloop()
 
     def add_drink(self):
-        self.current_drinks.append(self.Drink(self.new_drink_field.get(), 0, float(self.add_price_field.get()), self.button_frame))
+        self.current_drinks.append(self.Drink(self.new_drink_field.get(), 0, float(self.add_price_field.get().replace(",", ".")), self.button_frame))
 
         self.current_labels.append(tk.Label(self.button_frame, text=self.current_drinks[-1].drink_name))
         self.current_labels[len(self.current_labels)-1].grid(row=len(self.current_labels) - 1, column=0)
