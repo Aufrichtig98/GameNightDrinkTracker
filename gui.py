@@ -1,6 +1,4 @@
 import tkinter as tk
-import gui as gui
-
 
 class GameNightGui:
 
