@@ -25,7 +25,7 @@ class GameNightGui:
             self.display_drink.config(text=f"Current Amount of {self.drink_name}: {self.quantity}")
             self.file_handle.data_dict["Drinks"][self.drink_name]["Quantity"] -= 1
             self.file_handle.data_dict["Money"] += self.price
-            self.gui.display_money.config(text=f"Current Amount of Money in the Register {self.file_handle.data_dict['Money']}")
+            self.gui.display_money.config(text=f"Money: {self.file_handle.data_dict['Money']}")
             self.file_handle.save()
 
         def _free_drink(self):
@@ -65,22 +65,30 @@ class GameNightGui:
 
         self.initialize_drinks()
 
+        #Initializing all buttons
         self.enter_drink = tk.Label(self.button_frame, text="New Drink:")
         self.enter_drink.grid(sticky='SW', column=0, row=100)
+
+        self.revert = tk.Button(self.button_frame, text="Undo", command=self._revert)
+        self.revert.grid(sticky="SE", column=0, row=99)
+
         self.new_drink_field = tk.Entry(self.button_frame, width=10)
         self.new_drink_field.insert(0, "Drink Name")
         self.new_drink_field.grid(sticky="SW", column=1, row=100)
+
         self.add_price_field = tk.Entry(self.button_frame, width=10)
         self.add_price_field.insert(0, "Price")
         self.add_price_field.grid(sticky="SW", column=2, row=100)
+
         self.add_drink_button = tk.Button(self.button_frame, text="Add Drink", command=self.add_drink)
         self.add_drink_button.grid(sticky="SE", column=3, row=100)
+
         self.log_frame = tk.Text(self.root, height=5, width=100)
         self.log_frame.grid(sticky="SW", column=0, row=102)
         self.log_label = tk.Label(self.button_frame, text="Logger:")
         self.log_label.grid(sticky="S", column=0, row=102)
         self.log_label.config(font=("Courier", 14))
-        self.log_frame.insert(tk.INSERT, "Hello World")
+        self.log_frame.see("end")
         self.log_frame.config(state=tk.DISABLED)
 
         if "Money" not in self.file_handle.data_dict:
@@ -93,10 +101,39 @@ class GameNightGui:
 
 
     def _log(self, action, drink):
-        self.logger.push(logger.Logger.LogItem(drink,action, datetime.datetime.now()))
+        self.logger.push(logger.Logger.LogItem(drink, action, datetime.datetime.now()))
         self.log_frame.config(state=tk.NORMAL)
-        self.log_frame.insert(tk.INSERT, self.logger.log_message())
+        self.log_frame.insert('1.0', self.logger.log_message())
         self.log_frame.config(state=tk.DISABLED)
+
+    def _revert(self):
+        last_item = self.logger.pop()
+        match last_item.action:
+            case "INCREASE":
+                self.file_handle.data_dict["Drinks"][last_item.name]["Quantity"] -= 1
+                drink = self._find_drink(last_item.name)
+                drink.quantity -= 1
+                drink.display_drink.config(text=f"Current Amount of {drink.drink_name}: {drink.quantity}")
+                self.file_handle.save()
+            case "DECREASE":
+                self.file_handle.data_dict["Drinks"][last_item.name]["Quantity"] += 1
+                self.file_handle.data_dict["Money"] += self.file_handle.data_dict["Drinks"][last_item]["Price"]
+                drink = self._find_drink(last_item.name)
+                drink.quantity += 1
+                drink.display_drink.config(text=f"Current Amount of {drink.drink_name}: {drink.quantity}")
+                self.file_handle.save()
+            case "FREE":
+                self.file_handle.data_dict["Drinks"][last_item.name]["Quantity"] += 1
+                drink = self._find_drink(last_item.name)
+                drink.quantity += 1
+                drink.display_drink.config(text=f"Current Amount of {drink.drink_name}: {drink.quantity}")
+                self.file_handle.save()
+
+
+    def _find_drink(self, drink_name):
+        for drink in self.current_drinks:
+            if drink.drink_name == drink_name:
+                return drink
 
     def initialize_drinks(self):
         self.file_handle.load()

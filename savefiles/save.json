@@ -1,1 +1,1 @@
-{"Drinks": {"Cola": {"Quantity": 20, "Price": 5}, "Fanta": {"Quantity": -2, "Price": 1.0}}, "Money": 71.0}
+{"Drinks": {"Cola/Fanta 0.5": {"Quantity": 1, "Price": 5}, "Orangina": {"Quantity": 37, "Price": 1.5}, "Monster": {"Quantity": 29, "Price": 1.5}, "Cola 0.33l": {"Quantity": 15, "Price": 1.0}, "Bier": {"Quantity": 7, "Price": 1.0}, "Fritz Cola": {"Quantity": 4, "Price": 1.0}, "Spezi": {"Quantity": 54, "Price": 1.0}}, "Money": 133.0}
